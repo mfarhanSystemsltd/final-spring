@@ -29,27 +29,41 @@ stages:
     pool:
       vmImage: $(vmImageName)
 
-    steps:
-    - task: Maven@3
-      displayName: 'Maven Package'
-      inputs:
-        mavenPomFile: 'initial/pom.xml'
+    # steps:
+    # - task: Maven@3
+    #   displayName: 'Maven Package'
+    #   inputs:
+    #     mavenPomFile: 'initial/pom.xml'
 
-    - task: CopyFiles@2
-      displayName: 'Copy Files to artifact staging directory'
-      inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: '**/target/*.?(war|jar)'
-        TargetFolder: $(Build.ArtifactStagingDirectory)
+    # - task: CopyFiles@2
+    #   displayName: 'Copy Files to artifact staging directory'
+    #   inputs:
+    #     SourceFolder: '$(System.DefaultWorkingDirectory)'
+    #     Contents: '**/target/*.?(war|jar)'
+    #     TargetFolder: $(Build.ArtifactStagingDirectory)
 
-    - upload: $(Build.ArtifactStagingDirectory)
-      artifact: drop
+    # - upload: $(Build.ArtifactStagingDirectory)
+    #   artifact: drop
 
 
-    - task: AzureRmWebAppDeployment@4
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'Azure subscription 1 (f83bf2d0-2e3e-406a-a547-17c7f7b3b002)'
-        appType: 'webAppLinux'
-        WebAppName: 'finalsy'
-        packageForLinux: '$(System.DefaultWorkingDirectory)/_mfarhanSystemsltd.gs-spring-boot/drop/initial/target/*.jar'
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: DeployLinuxWebApp
+    displayName: Deploy Linux Web App
+    environment: $(environmentName)
+    pool:
+      vmImage: $(vmImageName)
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Azure Web App Deploy: finalsy'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              appType: webAppLinux
+              appName: $(webAppName)
+              package: '$(Pipeline.Workspace)/drop/**/target/*.?(war|jar)'
