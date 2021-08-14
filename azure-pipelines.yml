@@ -30,20 +30,20 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
-    # - task: Maven@3
-    #   displayName: 'Maven Package'
-    #   inputs:
-    #     mavenPomFile: 'initial/pom.xml'
+    - task: Maven@3
+      displayName: 'Maven Package'
+      inputs:
+        mavenPomFile: 'initial/pom.xml'
 
-    # - task: CopyFiles@2
-    #   displayName: 'Copy Files to artifact staging directory'
-    #   inputs:
-    #     SourceFolder: '$(System.DefaultWorkingDirectory)'
-    #     Contents: '**/target/*.?(war|jar)'
-    #     TargetFolder: $(Build.ArtifactStagingDirectory)
+    - task: CopyFiles@2
+      displayName: 'Copy Files to artifact staging directory'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: '**/target/*.?(war|jar)'
+        TargetFolder: $(Build.ArtifactStagingDirectory)
 
-    # - upload: $(Build.ArtifactStagingDirectory)
-    #   artifact: drop
+    - upload: $(Build.ArtifactStagingDirectory)
+      artifact: drop
 
 
     - task: AzureRmWebAppDeployment@4
@@ -52,4 +52,4 @@ stages:
         azureSubscription: 'Azure subscription 1 (f83bf2d0-2e3e-406a-a547-17c7f7b3b002)'
         appType: 'webAppLinux'
         WebAppName: 'finalsy'
-        packageForLinux: '$(System.DefaultWorkingDirectory)/_mfarhanSystemsltd.gs-spring-boot/drop/initial/target/spring-boot-initial-0.0.1-SNAPSHOT.jar'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/_mfarhanSystemsltd.gs-spring-boot/drop/initial/target/*.jar'
