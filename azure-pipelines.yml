@@ -46,3 +46,10 @@ stages:
       artifact: drop
 
 
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Azure subscription 1 (f83bf2d0-2e3e-406a-a547-17c7f7b3b002)'
+        appType: 'webAppLinux'
+        WebAppName: 'finalsy'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.jar'
